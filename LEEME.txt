@@ -1,8 +1,8 @@
 ZENQA LIFE · VISTA PREVIA DE LA TIENDA COMPLETA (32 pantallas)
 ============================================================
-Abre index.html. La navegación entre páginas está OCULTA para que veas la web tal cual:
-abajo a la izquierda tienes el botón «☰ 32 páginas» para saltar a cualquier pantalla
-(y «Ocultar esta barra ✕» para volver a esconderla). Esa barra no forma parte del tema.
+Abre index.html y navega con los enlaces de la propia web (menú, pie de página, botones).
+Las páginas no llevan ningún añadido encima del diseño: cero barras, cero botones flotantes.
+Si quieres ver el listado completo, abre «indice.html» (documento aparte, no sale en ninguna página).
 
 Orden recomendado para revisar:
   Inicio · Producto (matcha / kit / accesorio) · Colección · Listado de colecciones · Carrito ·
@@ -13,4 +13,4 @@ Orden recomendado para revisar:
 
 Capturas de las 32 páginas: zenqa-capturas/tienda-1.jpg y zenqa-capturas/tienda-2.jpg
 Tema listo para desplegar en Shopify: repositorio zenqalife-sys/zenqa-life-theme (rama main).
-Versión online para compartir: https://zenqalife-sys.github.io/zenqa-life-preview/
+Versión online: https://zenqalife-sys.github.io/zenqa-life-preview/  ·  índice: .../indice.html
