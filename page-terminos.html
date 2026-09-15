@@ -58,7 +58,8 @@
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
       </button>
 
-      <a class="header__logo" href="index.html"><span class="header__logo-text">Zenqa Life</span></a><nav class="header__nav" aria-label="Menú">
+      <a class="header__logo" href="index.html" aria-label="Zenqa Life"><span class="header__logo-mark"><img src="assets/logo-badge.png" srcset="assets/logo-badge.png 1x, assets/logo-badge@2x.png 2x" alt="Zenqa Life" width="120" height="120" loading="eager" fetchpriority="high"></span>
+          <span class="header__logo-text header__logo-text--aside">Zenqa Life</span></a><nav class="header__nav" aria-label="Menú">
         <ul class="header__menu"><li class="has-mega"><button class="header__link" type="button" data-mega-trigger="#Mega-1" aria-expanded="false" aria-controls="Mega-1">
                   Matcha <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                 </button>
@@ -288,7 +289,10 @@
 </header>
 <div class="mobile-menu" data-mobile-menu role="dialog" aria-modal="true" aria-label="Menú">
   <div class="mobile-menu__head">
-    <a href="" class="header__logo-text">Zenqa Life</a>
+    <a href="" class="header__logo" aria-label="">
+      <span class="header__logo-mark header__logo-mark--sm"><img src="assets/logo-badge.png" alt="" width="80" height="80" loading="lazy"></span>
+      <span class="header__logo-text header__logo-text--aside">Zenqa Life</span>
+    </a>
     <button class="drawer__close" type="button" data-mobile-menu-close aria-label="Cerrar">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
     </button>
@@ -573,12 +577,12 @@
   </div>
 </div>
 
-<div class="newsletter-popup" data-popup="1" data-popup-delay="14" hidden role="dialog" aria-modal="true" aria-label="10% en tu primer matcha">
+<div class="newsletter-popup" data-popup="1" data-popup-delay="5" hidden role="dialog" aria-modal="true" aria-label="10% en tu primer matcha">
   <div class="overlay is-active" data-popup-close></div>
   <div class="newsletter-popup__panel" style="position:relative;z-index:2">
     <button class="drawer__close modal__close" type="button" data-popup-close aria-label="Cerrar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     <div class="newsletter-popup__media">
-      <img src="assets/art-community.jpg" alt="Ritual Zenqa Life" width="900" height="1100" loading="lazy">
+      <img src="assets/art-community.jpg" alt="Ritual Zenqa Life" width="900" height="1100" loading="eager" decoding="async" fetchpriority="low">
     </div>
     <div class="newsletter-popup__copy">
       <span class="kicker kicker--pink">10% de descuento en tu primer pedido</span>
@@ -699,19 +703,37 @@
     const announcement = $('[data-announcement]');
     if (!header) return;
     let lastY = window.scrollY;
+    let ticking = false;
+
+    const apply = () => {
+      ticking = false;
+      const y = Math.max(0, window.scrollY);
+      header.classList.toggle('is-scrolled', y > 12);
+
+      // Ocultar la cabecera al bajar, mostrarla al subir.
+      // Se exige un desplazamiento mínimo por gesto (histéresis) para que no vibre
+      // cuando el scroll se detiene o llega el rebote del móvil.
+      const delta = y - lastY;
+      if (header.dataset.sticky !== 'true' || y < 240) {
+        header.classList.remove('is-header-hidden');
+      } else if (delta > 8 && !header.classList.contains('has-open-menu') && !document.body.classList.contains('cart-open')) {
+        header.classList.add('is-header-hidden');
+      } else if (delta < -4) {
+        header.classList.remove('is-header-hidden');
+      }
+      // Solo se memoriza la posición en desplazamientos reales: así el temblor
+      // de 1-2 px (rueda, trackpad, barra del móvil) no invierte la dirección.
+      if (Math.abs(delta) > 2) lastY = y;
+    };
 
     const onScroll = () => {
-      const y = window.scrollY;
-      header.classList.toggle('is-scrolled', y > 12);
-      if (header.dataset.sticky === 'true' && y > 220) {
-        header.classList.toggle('is-hidden', y > lastY + 4 && !header.classList.contains('has-open-menu') && !document.body.classList.contains('cart-open'));
-      } else {
-        header.classList.remove('is-hidden');
-      }
-      lastY = y;
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(apply);
     };
     on(window, 'scroll', onScroll, { passive: true });
-    onScroll();
+    on(window, 'resize', onScroll, { passive: true });
+    apply();
 
     // Mega menú con teclado
     $$('[data-mega-trigger]').forEach((btn) => {
@@ -1458,10 +1480,12 @@
   function initPopup() {
     const popup = $('[data-popup]');
     if (!popup) return;
+    // Una vez por visita (sessionStorage): reaparecer en cada página era lo que hacía
+    // que se sintiera pesado; con localStorage no volvía nunca más.
     const key = 'zenqa:popup:' + (popup.dataset.popup || '1');
     let dismissed = false;
     try {
-      dismissed = localStorage.getItem(key) === '1';
+      dismissed = sessionStorage.getItem(key) === '1';
     } catch (e) {}
     if (dismissed) return;
     const delay = parseInt(popup.dataset.popupDelay || '12', 10) * 1000;
@@ -1483,7 +1507,7 @@
         clearTimeout(timer);
         popup.hidden = true;
         try {
-          localStorage.setItem(key, '1');
+          sessionStorage.setItem(key, '1');
         } catch (err) {}
         Overlay.closeAll();
       }
@@ -1493,7 +1517,7 @@
       if (!form) return;
       // El envío se hace vía Shopify (marketing). Cerramos después.
       try {
-        localStorage.setItem(key, '1');
+        sessionStorage.setItem(key, '1');
       } catch (err) {}
       setTimeout(() => {
         popup.hidden = true;

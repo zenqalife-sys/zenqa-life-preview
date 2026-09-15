@@ -339,19 +339,20 @@ p { text-wrap: pretty; }
   position: relative; z-index: var(--z-header);
   background: var(--color-bg);
   border-bottom: 1px solid var(--color-line);
-  transition: transform var(--dur) var(--ease-out), background var(--dur), box-shadow var(--dur);
+  will-change: transform;
+  transition: transform 260ms var(--ease-out), box-shadow 260ms var(--ease-out);
 }
 .site-header.is-sticky { position: sticky; top: 0; }
 .site-header.is-scrolled { background: color-mix(in srgb, var(--color-bg) 88%, transparent); backdrop-filter: blur(14px) saturate(140%); box-shadow: 0 1px 0 var(--color-line), 0 8px 30px rgba(11,11,11,0.05); }
-.site-header.is-hidden { transform: translateY(-102%); }
+.site-header.is-header-hidden { transform: translateY(-102%); }
 .site-header--transparent { background: transparent; border-bottom-color: transparent; color: var(--color-bg); }
 .site-header--transparent.is-scrolled { background: color-mix(in srgb, var(--color-bg) 92%, transparent); color: var(--color-forest); border-bottom-color: var(--color-line); }
 .header__inner { display: flex; align-items: center; gap: var(--space-md); min-height: var(--header-height); }
 .header__logo { flex: 0 0 auto; display: flex; align-items: center; }
 .header__logo img { max-height: 44px; width: auto; object-fit: contain; }
 .header__logo-text { font-family: var(--font-display); font-size: 26px; letter-spacing: 0.14em; text-transform: uppercase; }
-.header__nav { flex: 1 1 auto; display: none; }
-@media (min-width: 990px) { .header__nav { display: flex; justify-content: center; } }
+.header__nav { flex: 1 1 auto; min-width: 0; display: none; }
+@media (min-width: 1180px) { .header__nav { display: flex; justify-content: center; } }
 .header__menu { display: flex; align-items: center; gap: clamp(14px, 1.8vw, 30px); }
 .header__menu > li { position: static; }
 .header__link {
@@ -368,7 +369,7 @@ p { text-wrap: pretty; }
 .header__link--accent { color: var(--color-pink); }
 .header__link--accent::after { background: var(--color-pink); }
 .header__actions { flex: 0 0 auto; display: flex; align-items: center; gap: 4px; margin-left: auto; }
-@media (min-width: 990px) { .header__actions { margin-left: 0; } }
+@media (min-width: 1180px) { .header__actions { margin-left: 0; } }
 .icon-btn {
   position: relative;
   display: inline-flex; align-items: center; justify-content: center;
@@ -386,10 +387,10 @@ p { text-wrap: pretty; }
 }
 .cart-count[data-count="0"] { display: none; }
 .header__burger { display: inline-flex; }
-@media (min-width: 990px) { .header__burger { display: none; } }
+@media (min-width: 1180px) { .header__burger { display: none; } }
 
 /* Mega menú */
-.mega {
+.mega { max-width: calc(100vw - 32px);
   position: absolute; left: 0; right: 0; top: 100%;
   background: var(--color-bg); border-top: 1px solid var(--color-line); border-bottom: 1px solid var(--color-line);
   box-shadow: var(--shadow-md);
@@ -431,9 +432,9 @@ p { text-wrap: pretty; }
 
 /* ---------- 9. DRAWER / MODAL / BÚSQUEDA ---------- */
 .overlay {
-  position: fixed; inset: 0; background: rgba(11, 11, 11, 0.45);
+  position: fixed; inset: 0; background: rgba(11, 11, 11, 0.55);
   opacity: 0; visibility: hidden; transition: opacity var(--dur) var(--ease-out), visibility var(--dur);
-  z-index: calc(var(--z-drawer) - 1); backdrop-filter: blur(2px);
+  z-index: calc(var(--z-drawer) - 1);
 }
 .overlay.is-active { opacity: 1; visibility: visible; }
 .drawer {
@@ -1467,14 +1468,9 @@ img, video, iframe, svg, table { max-width: 100%; }
    33 · Plantilla de página (contenido + columna lateral) y tienda cerrada
    ========================================================================== */
 .page-section { padding-block: 0 var(--space-2xl); }
-.page-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
-  gap: var(--space-2xl);
-  align-items: start;
-}
+.page-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-xl); align-items: start; }
 .page-layout__main { display: grid; gap: var(--space-xl); min-width: 0; }
-.page-layout__aside { display: grid; gap: var(--space-md); align-content: start; position: sticky; top: calc(var(--header-height, 96px) + var(--space-sm)); }
+.page-layout__aside { display: grid; gap: var(--space-md); align-content: start; grid-template-columns: minmax(0, 1fr); }
 
 .page-card {
   display: grid;
@@ -1512,10 +1508,7 @@ img, video, iframe, svg, table { max-width: 100%; }
 .page-products__price { font-size: var(--step--1); font-weight: 800; color: var(--color-pink); }
 
 .page-cta { margin-top: var(--space-2xl); background: var(--color-sage); }
-.page-cta__inner {
-  display: grid; grid-template-columns: minmax(0, 1.4fr) auto; align-items: center; gap: var(--space-lg);
-  padding-block: var(--space-xl);
-}
+.page-cta__inner { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; gap: var(--space-lg); padding-block: var(--space-xl); }
 .page-cta__title { font-size: var(--step-5); margin-top: 6px; }
 .page-cta__text { color: var(--color-muted); margin-top: 6px; }
 
@@ -1534,7 +1527,7 @@ img, video, iframe, svg, table { max-width: 100%; }
 .pw-card--soft { background: rgba(255, 255, 255, .035); }
 .pw-card__text { font-size: var(--step--1); opacity: .82; max-width: 42ch; }
 .pw-form { width: 100%; }
-.pw-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-2xs); align-items: stretch; }
+.pw-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2xs); align-items: stretch; }
 .pw-row .input { background: rgba(255, 255, 255, .95); border-color: transparent; }
 .pw-perks { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2xs); margin-top: 4px; }
 .pw-perks li {
@@ -1547,15 +1540,15 @@ img, video, iframe, svg, table { max-width: 100%; }
 .password-page .kicker--light { opacity: .95; }
 .password-page .newsletter-form { width: 100%; }
 
-@media (max-width: 1024px) {
-  .page-layout { grid-template-columns: 1fr; gap: var(--space-xl); }
-  .page-layout__aside { position: static; }
+/* Puntos de ruptura hacia arriba: móvil → tableta → escritorio */
+@media (min-width: 641px) {
   .page-layout__aside { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .page-cta__inner { grid-template-columns: 1fr; }
+  .pw-row { grid-template-columns: minmax(0, 1fr) auto; }
 }
-@media (max-width: 640px) {
-  .page-layout__aside { grid-template-columns: 1fr; }
-  .pw-row { grid-template-columns: 1fr; }
+@media (min-width: 1025px) {
+  .page-layout { grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: var(--space-2xl); }
+  .page-layout__aside { position: sticky; top: calc(var(--header-height, 96px) + var(--space-sm)); }
+  .page-cta__inner { grid-template-columns: minmax(0, 1.4fr) auto; }
 }
 
 /* --- Texto sobre banner oscuro (colección y cualquier hero con imagen) --- */
@@ -1565,3 +1558,23 @@ img, video, iframe, svg, table { max-width: 100%; }
 .collection-hero--banner .rte p,
 .collection-hero--banner p { color: rgba(247, 245, 236, 0.92); }
 .collection-hero--banner .rte a { color: var(--color-matcha); }
+
+/* --- Monograma circular de la cabecera (logo en marco redondo) --- */
+.header__logo { display: inline-flex; align-items: center; gap: 10px; flex: none; }
+.header__logo-text--aside { white-space: nowrap; }
+.header__logo-mark {
+  display: grid; place-items: center; flex: none;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--color-bg);
+  border: 1px solid rgba(20, 69, 47, 0.18);
+  box-shadow: 0 2px 10px rgba(11, 11, 11, 0.07);
+  transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
+}
+.header__logo-mark img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.header__logo-mark--sm { width: 48px; height: 48px; }
+.header__logo:hover .header__logo-mark { transform: scale(1.04); box-shadow: 0 6px 18px rgba(11, 11, 11, 0.12); }
+@media (min-width: 990px) { .header__logo-mark { width: 66px; height: 66px; } }
+@media (max-width: 639px) { .header__logo-text--aside { display: none; } }   /* en móvil solo el monograma */
+.site-header--transparent .header__logo-mark { background: var(--color-bg); }

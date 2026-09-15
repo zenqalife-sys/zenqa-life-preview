@@ -92,19 +92,37 @@
     const announcement = $('[data-announcement]');
     if (!header) return;
     let lastY = window.scrollY;
+    let ticking = false;
+
+    const apply = () => {
+      ticking = false;
+      const y = Math.max(0, window.scrollY);
+      header.classList.toggle('is-scrolled', y > 12);
+
+      // Ocultar la cabecera al bajar, mostrarla al subir.
+      // Se exige un desplazamiento mínimo por gesto (histéresis) para que no vibre
+      // cuando el scroll se detiene o llega el rebote del móvil.
+      const delta = y - lastY;
+      if (header.dataset.sticky !== 'true' || y < 240) {
+        header.classList.remove('is-header-hidden');
+      } else if (delta > 8 && !header.classList.contains('has-open-menu') && !document.body.classList.contains('cart-open')) {
+        header.classList.add('is-header-hidden');
+      } else if (delta < -4) {
+        header.classList.remove('is-header-hidden');
+      }
+      // Solo se memoriza la posición en desplazamientos reales: así el temblor
+      // de 1-2 px (rueda, trackpad, barra del móvil) no invierte la dirección.
+      if (Math.abs(delta) > 2) lastY = y;
+    };
 
     const onScroll = () => {
-      const y = window.scrollY;
-      header.classList.toggle('is-scrolled', y > 12);
-      if (header.dataset.sticky === 'true' && y > 220) {
-        header.classList.toggle('is-hidden', y > lastY + 4 && !header.classList.contains('has-open-menu') && !document.body.classList.contains('cart-open'));
-      } else {
-        header.classList.remove('is-hidden');
-      }
-      lastY = y;
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(apply);
     };
     on(window, 'scroll', onScroll, { passive: true });
-    onScroll();
+    on(window, 'resize', onScroll, { passive: true });
+    apply();
 
     // Mega menú con teclado
     $$('[data-mega-trigger]').forEach((btn) => {
@@ -851,10 +869,12 @@
   function initPopup() {
     const popup = $('[data-popup]');
     if (!popup) return;
+    // Una vez por visita (sessionStorage): reaparecer en cada página era lo que hacía
+    // que se sintiera pesado; con localStorage no volvía nunca más.
     const key = 'zenqa:popup:' + (popup.dataset.popup || '1');
     let dismissed = false;
     try {
-      dismissed = localStorage.getItem(key) === '1';
+      dismissed = sessionStorage.getItem(key) === '1';
     } catch (e) {}
     if (dismissed) return;
     const delay = parseInt(popup.dataset.popupDelay || '12', 10) * 1000;
@@ -876,7 +896,7 @@
         clearTimeout(timer);
         popup.hidden = true;
         try {
-          localStorage.setItem(key, '1');
+          sessionStorage.setItem(key, '1');
         } catch (err) {}
         Overlay.closeAll();
       }
@@ -886,7 +906,7 @@
       if (!form) return;
       // El envío se hace vía Shopify (marketing). Cerramos después.
       try {
-        localStorage.setItem(key, '1');
+        sessionStorage.setItem(key, '1');
       } catch (err) {}
       setTimeout(() => {
         popup.hidden = true;
