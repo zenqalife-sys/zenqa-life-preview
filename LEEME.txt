@@ -1,0 +1,16 @@
+ZENQA LIFE · VISTA PREVIA DE LA TIENDA COMPLETA (32 pantallas)
+============================================================
+Abre index.html. La navegación entre páginas está OCULTA para que veas la web tal cual:
+abajo a la izquierda tienes el botón «☰ 32 páginas» para saltar a cualquier pantalla
+(y «Ocultar esta barra ✕» para volver a esconderla). Esa barra no forma parte del tema.
+
+Orden recomendado para revisar:
+  Inicio · Producto (matcha / kit / accesorio) · Colección · Listado de colecciones · Carrito ·
+  Búsqueda · Blog y artículo · 404 · Página genérica · Sobre nosotros · Club Zenqa ·
+  Cómo preparar matcha · Encuentra tu matcha · Contacto · Envíos y devoluciones · FAQ ·
+  Legales (aviso, privacidad, cookies, términos) · Entrar · Crear cuenta · Mi cuenta · Pedido ·
+  Direcciones · Activar cuenta · Recuperar contraseña · Tienda cerrada · Tarjeta regalo
+
+Capturas de las 32 páginas: zenqa-capturas/tienda-1.jpg y zenqa-capturas/tienda-2.jpg
+Tema listo para desplegar en Shopify: repositorio zenqalife-sys/zenqa-life-theme (rama main).
+Versión online para compartir: https://zenqalife-sys.github.io/zenqa-life-preview/
