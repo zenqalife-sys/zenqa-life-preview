@@ -11,6 +11,8 @@ Orden recomendado para revisar:
   Legales (aviso, privacidad, cookies, términos) · Entrar · Crear cuenta · Mi cuenta · Pedido ·
   Direcciones · Activar cuenta · Recuperar contraseña · Tienda cerrada · Tarjeta regalo
 
-Capturas de las 32 páginas: zenqa-capturas/tienda-1.jpg y zenqa-capturas/tienda-2.jpg
+Las páginas son autocontenidas: el CSS, el JS y las imágenes del tema van dentro del propio HTML,
+así que se ven igual sin conexión y sin carpetas de apoyo.
+
 Tema listo para desplegar en Shopify: repositorio zenqalife-sys/zenqa-life-theme (rama main).
-Versión online: https://zenqalife-sys.github.io/zenqa-life-preview/  ·  índice: .../indice.html
+Informe de la auditoría de publicación: AUDITORIA-SHOPIFY.md en ese mismo repositorio.
