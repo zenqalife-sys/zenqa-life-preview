@@ -174,6 +174,14 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3 {
 body.headings-uppercase h1, body.headings-uppercase h2, body.headings-uppercase h3,
 body.headings-uppercase h4, body.headings-uppercase h5, body.headings-uppercase h6,
 body.headings-uppercase .h1, body.headings-uppercase .h2, body.headings-uppercase .h3 { text-transform: uppercase; }
+/* Red de seguridad: si una palabra no cabe (pantallas muy estrechas, titular grande),
+   se parte con guion en lugar de sacar la página de ancho. No afecta cuando sí cabe. */
+h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5,
+.page-hero__title, .legal__title, .hero__title, .rte h1, .rte h2, .rte h3 {
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
 h1, .h1 { font-size: calc(var(--step-7) * var(--display-scale)); }
 h2, .h2 { font-size: calc(var(--step-6) * var(--display-scale)); }
 h3, .h3 { font-size: calc(var(--step-5) * var(--display-scale)); }
@@ -472,8 +480,7 @@ p { text-wrap: pretty; }
 @media (min-width: 1180px) { .header__burger { display: none; } }
 
 /* Mega menú */
-.mega { max-width: calc(100vw - 32px);
-  position: absolute; left: 0; right: 0; top: 100%;
+.mega { position: absolute; left: 0; right: 0; top: 100%; width: 100%; box-sizing: border-box;
   background: var(--color-bg); border-top: 1px solid var(--color-line); border-bottom: 1px solid var(--color-line);
   box-shadow: var(--shadow-md);
   opacity: 0; visibility: hidden; transform: translateY(-8px);
@@ -481,9 +488,10 @@ p { text-wrap: pretty; }
   z-index: var(--z-header);
 }
 .has-mega:hover .mega, .has-mega:focus-within .mega, .mega.is-open { opacity: 1; visibility: visible; transform: translateY(0); }
-.mega__inner { display: grid; gap: var(--space-xl); padding: var(--space-xl) 0; grid-template-columns: 1fr; }
+.mega__inner { display: grid; gap: var(--space-xl); padding: var(--space-xl) 0; grid-template-columns: 1fr; min-width: 0; }
 @media (min-width: 990px) { .mega__inner { grid-template-columns: 1.1fr 2fr; } }
-.mega__cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--space-lg); }
+.mega__cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--space-lg); min-width: 0; }
+.mega__cols > div, .mega .container { min-width: 0; }
 .mega__col-title { font-size: var(--step--1); font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-muted); margin-bottom: var(--space-xs); }
 .mega__list li + li { margin-top: 9px; }
 .mega__list a { font-size: var(--step-0); font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: color var(--dur), gap var(--dur); }
@@ -1680,7 +1688,7 @@ img, video, iframe, svg, table { max-width: 100%; }
   const Z = (window.Zenqa = window.Zenqa || {});
   const routes = () => Z.routes || {};
   const $ = (sel, ctx = document) => ctx.querySelector(sel);
-  const $ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+  const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
   const on = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
   const debounce = (fn, wait = 250) => {
     let t;
@@ -1746,11 +1754,11 @@ img, video, iframe, svg, table { max-width: 100%; }
       document.body.style.overflow = 'hidden';
     },
     closeAll() {
-      $('[data-drawer].is-open, [data-mobile-menu].is-open, [data-search-modal]:not([hidden]), [data-popup]:not([hidden])').forEach((el) => {
+      $$('[data-drawer].is-open, [data-mobile-menu].is-open, [data-search-modal]:not([hidden]), [data-popup]:not([hidden])').forEach((el) => {
         el.classList.remove('is-open');
         if (el.hasAttribute('data-search-modal') || el.hasAttribute('data-popup')) el.hidden = true;
       });
-      $('.mega.is-open').forEach((m) => m.classList.remove('is-open'));
+      $$('.mega.is-open').forEach((m) => m.classList.remove('is-open'));
       if (this.el) this.el.classList.remove('is-active');
       document.body.style.overflow = '';
     }
@@ -1796,21 +1804,21 @@ img, video, iframe, svg, table { max-width: 100%; }
     apply();
 
     // Mega menú con teclado
-    $('[data-mega-trigger]').forEach((btn) => {
+    $$('[data-mega-trigger]').forEach((btn) => {
       const target = $(btn.getAttribute('data-mega-trigger'));
       if (!target) return;
       on(btn, 'click', (e) => {
         e.preventDefault();
         const willOpen = !target.classList.contains('is-open');
-        $('.mega.is-open').forEach((m) => m.classList.remove('is-open'));
+        $$('.mega.is-open').forEach((m) => m.classList.remove('is-open'));
         target.classList.toggle('is-open', willOpen);
         btn.setAttribute('aria-expanded', String(willOpen));
         header.classList.toggle('has-open-menu', willOpen);
       });
     });
     const closeMega = () => {
-      $('.mega.is-open').forEach((m) => m.classList.remove('is-open'));
-      $('[data-mega-trigger]').forEach((b) => b.setAttribute('aria-expanded', 'false'));
+      $$('.mega.is-open').forEach((m) => m.classList.remove('is-open'));
+      $$('[data-mega-trigger]').forEach((b) => b.setAttribute('aria-expanded', 'false'));
       header.classList.remove('has-open-menu');
     };
     on(document, 'keydown', (e) => {
@@ -1838,7 +1846,7 @@ img, video, iframe, svg, table { max-width: 100%; }
     on($('[data-mobile-menu-close]'), 'click', () => Overlay.closeAll());
 
     // Submenús móviles
-    $('[data-submenu-toggle]').forEach((btn) => {
+    $$('[data-submenu-toggle]').forEach((btn) => {
       on(btn, 'click', () => {
         const panel = document.getElementById(btn.getAttribute('aria-controls'));
         if (!panel) return;
@@ -1854,11 +1862,11 @@ img, video, iframe, svg, table { max-width: 100%; }
     // Actualiza contadores, subtotales y barras de envío gratis en toda la página
     if (payload) {
       const count = payload.item_count || 0;
-      $('[data-cart-count]').forEach((el) => {
+      $$('[data-cart-count]').forEach((el) => {
         el.textContent = count > 99 ? '99+' : String(count);
         el.dataset.count = String(count);
       });
-      $('[data-cart-subtotal]').forEach((el) => (el.textContent = formatMoney(payload.total_price)));
+      $$('[data-cart-subtotal]').forEach((el) => (el.textContent = formatMoney(payload.total_price)));
       updateShippingBars(payload.total_price);
       renderCartDrawerFromJSON(payload);
       return;
@@ -1871,7 +1879,7 @@ img, video, iframe, svg, table { max-width: 100%; }
   Z.cartRefresh = cartRefresh;
 
   function updateShippingBars(cents) {
-    $('[data-ship-progress]').forEach((wrap) => {
+    $$('[data-ship-progress]').forEach((wrap) => {
       const threshold = parseFloat(wrap.dataset.threshold || '35') * 100;
       const remaining = Math.max(0, threshold - cents);
       const pct = Math.min(100, (cents / threshold) * 100);
@@ -2185,7 +2193,7 @@ img, video, iframe, svg, table { max-width: 100%; }
     };
 
     function currentVariant() {
-      const options = $('[data-option-input]', form || document)
+      const options = $$('[data-option-input]', form || document)
         .filter((i) => i.checked)
         .map((i) => i.value);
       if (!variants.length) return null;
@@ -2211,7 +2219,7 @@ img, video, iframe, svg, table { max-width: 100%; }
         }
         return;
       }
-      $('[data-variant-id]').forEach((i) => (i.value = variant.id));
+      $$('[data-variant-id]').forEach((i) => (i.value = variant.id));
       if (priceEl) priceEl.textContent = formatMoney(variant.price);
       if (stickyPrice) stickyPrice.textContent = formatMoney(variant.price);
       if (compareEl) {
@@ -2237,7 +2245,7 @@ img, video, iframe, svg, table { max-width: 100%; }
       if (variant.featured_media_id && pdp) {
         const target = $('[data-media-id="' + variant.featured_media_id + '"]', pdp);
         if (target) {
-          $('[data-media-id]', pdp).forEach((m) => m.classList.remove('is-active'));
+          $$('[data-media-id]', pdp).forEach((m) => m.classList.remove('is-active'));
           target.classList.add('is-active');
           target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
@@ -2255,7 +2263,7 @@ img, video, iframe, svg, table { max-width: 100%; }
     });
 
     // Selector de packs (cantidad con ahorro)
-    $('[data-pack-select]').forEach((group) => {
+    $$('[data-pack-select]').forEach((group) => {
       on(group, 'change', (e) => {
         const qty = parseInt(e.target.value, 10) || 1;
         const qtyInput = $('[data-product-qty]', form || document);
@@ -2271,7 +2279,7 @@ img, video, iframe, svg, table { max-width: 100%; }
       if (!input) return;
       const next = Math.max(1, (parseInt(input.value, 10) || 1) + parseInt(step.dataset.productQtyStep, 10));
       input.value = next;
-      $('[data-pack-select] input').forEach((r) => (r.checked = r.value === String(next)));
+      $$('[data-pack-select] input').forEach((r) => (r.checked = r.value === String(next)));
     });
 
     // Suscripción (planes de venta reales): aviso y precio del plan elegido
@@ -2355,13 +2363,13 @@ img, video, iframe, svg, table { max-width: 100%; }
 
   /* --------------------------------------------------------- acordeones/tabs */
   function initDisclosure() {
-    $('[data-accordion]').forEach((acc) => {
-      $('[data-accordion-trigger]', acc).forEach((btn) => {
+    $$('[data-accordion]').forEach((acc) => {
+      $$('[data-accordion-trigger]', acc).forEach((btn) => {
         on(btn, 'click', () => {
           const item = btn.closest('.accordion__item');
           const open = btn.getAttribute('aria-expanded') === 'true';
           if (acc.dataset.accordion === 'single') {
-            $('.accordion__item', acc).forEach((i) => {
+            $$('.accordion__item', acc).forEach((i) => {
               i.classList.remove('is-open');
               const t = $('[data-accordion-trigger]', i);
               if (t) t.setAttribute('aria-expanded', 'false');
@@ -2373,8 +2381,8 @@ img, video, iframe, svg, table { max-width: 100%; }
       });
     });
 
-    $('[data-tabs]').forEach((tabs) => {
-      const btns = $('[data-tab-btn]', tabs);
+    $$('[data-tabs]').forEach((tabs) => {
+      const btns = $$('[data-tab-btn]', tabs);
       btns.forEach((btn) => {
         on(btn, 'click', () => {
           const target = btn.dataset.tabBtn;
@@ -2382,7 +2390,7 @@ img, video, iframe, svg, table { max-width: 100%; }
             b.classList.toggle('is-active', b === btn);
             b.setAttribute('aria-selected', String(b === btn));
           });
-          $('[data-tab-panel]', tabs).forEach((p) => p.classList.toggle('is-active', p.dataset.tabPanel === target));
+          $$('[data-tab-panel]', tabs).forEach((p) => p.classList.toggle('is-active', p.dataset.tabPanel === target));
         });
       });
       if (btns.length && !btns.some((b) => b.classList.contains('is-active'))) btns[0].click();
@@ -2392,7 +2400,7 @@ img, video, iframe, svg, table { max-width: 100%; }
   /* ----------------------------------------------------------- revelados */
   function initReveal() {
     if (!('IntersectionObserver' in window)) {
-      $('[data-reveal]').forEach((el) => el.classList.add('is-visible'));
+      $$('[data-reveal]').forEach((el) => el.classList.add('is-visible'));
       return;
     }
     const io = new IntersectionObserver(
@@ -2402,16 +2410,16 @@ img, video, iframe, svg, table { max-width: 100%; }
             entry.target.classList.add('is-visible');
             io.unobserve(entry.target);
             // anima barras/graphs dentro del bloque revelado
-            $('[data-animate-width]', entry.target).forEach((el) => (el.style.width = el.dataset.animateWidth + '%'));
+            $$('[data-animate-width]', entry.target).forEach((el) => (el.style.width = el.dataset.animateWidth + '%'));
           }
         });
       },
       { rootMargin: '0px 0px -8% 0px', threshold: 0.12 }
     );
-    $('[data-reveal]').forEach((el) => io.observe(el));
+    $$('[data-reveal]').forEach((el) => io.observe(el));
 
     // Contadores
-    $('[data-counter]').forEach((el) => {
+    $$('[data-counter]').forEach((el) => {
       const target = parseFloat(el.dataset.counter);
       const decimals = parseInt(el.dataset.counterDecimals || '0', 10);
       let started = false;
@@ -2437,8 +2445,8 @@ img, video, iframe, svg, table { max-width: 100%; }
 
   /* --------------------------------------------------------------- quiz */
   function initQuiz() {
-    $('[data-quiz]').forEach((quiz) => {
-      const steps = $('[data-quiz-step]', quiz);
+    $$('[data-quiz]').forEach((quiz) => {
+      const steps = $$('[data-quiz-step]', quiz);
       const progress = $('[data-quiz-progress]', quiz);
       const answers = {};
       let index = 0;
@@ -2460,7 +2468,7 @@ img, video, iframe, svg, table { max-width: 100%; }
         if (e.target.closest('[data-quiz-restart]')) {
           index = 0;
           Object.keys(answers).forEach((k) => delete answers[k]);
-          $('.quiz__result-full', quiz).forEach((r) => r.classList.remove('is-active'));
+          $$('.quiz__result-full', quiz).forEach((r) => r.classList.remove('is-active'));
           update();
         }
       });
@@ -2479,7 +2487,7 @@ img, video, iframe, svg, table { max-width: 100%; }
       }
 
       function runMatch() {
-        const products = $('[data-quiz-product]', quiz);
+        const products = $$('[data-quiz-product]', quiz);
         if (!products.length) return;
         let best = products[0];
         let bestScore = -1;
@@ -2490,7 +2498,7 @@ img, video, iframe, svg, table { max-width: 100%; }
             bestScore = s;
           }
         });
-        $('.quiz__result-slot', quiz).forEach((slot) => {
+        $$('.quiz__result-slot', quiz).forEach((slot) => {
           slot.innerHTML = best.innerHTML;
           slot.dataset.match = 'true';
         });
@@ -2508,7 +2516,7 @@ img, video, iframe, svg, table { max-width: 100%; }
 
   /* ----------------------------------------------------------- countdown */
   function initCountdown() {
-    $('[data-countdown]').forEach((el) => {
+    $$('[data-countdown]').forEach((el) => {
       const minutes = parseFloat(el.dataset.countdown) || 0;
       const endTime = new Date().setMinutes(new Date().getMinutes() + minutes);
       const target = el.dataset.countdownUntil ? new Date(el.dataset.countdownUntil).getTime() : endTime;
@@ -2532,7 +2540,7 @@ img, video, iframe, svg, table { max-width: 100%; }
 
   /* ------------------------------------------------------------- marquee */
   function initMarquee() {
-    $('[data-marquee]').forEach((marquee) => {
+    $$('[data-marquee]').forEach((marquee) => {
       const track = $('.marquee__track', marquee);
       if (!track) return;
       const speed = parseFloat(marquee.dataset.marquee) || 32;
@@ -2611,7 +2619,7 @@ img, video, iframe, svg, table { max-width: 100%; }
     };
     const paint = () => {
       const list = read();
-      $('[data-wishlist-toggle]').forEach((btn) => {
+      $$('[data-wishlist-toggle]').forEach((btn) => {
         const active = list.includes(btn.dataset.wishlistToggle);
         btn.classList.toggle('is-active', active);
         btn.setAttribute('aria-pressed', String(active));
@@ -2650,7 +2658,7 @@ img, video, iframe, svg, table { max-width: 100%; }
       }
     });
     // autoenvía los filtros
-    $('[data-filter-form] input[type="checkbox"], [data-filter-form] select').forEach((el) => {
+    $$('[data-filter-form] input[type="checkbox"], [data-filter-form] select').forEach((el) => {
       on(el, 'change', debounce(() => el.form && el.form.submit(), 400));
     });
   }
@@ -2663,7 +2671,7 @@ img, video, iframe, svg, table { max-width: 100%; }
       on(toTop, 'click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
     }
     // Año dinámico
-    $('[data-year]').forEach((el) => (el.textContent = new Date().getFullYear()));
+    $$('[data-year]').forEach((el) => (el.textContent = new Date().getFullYear()));
     // Copiar enlace (compartir)
     on(document, 'click', (e) => {
       const btn = e.target.closest('[data-copy-link]');
@@ -2709,8 +2717,8 @@ img, video, iframe, svg, table { max-width: 100%; }
         root: "/",
         cart: "/cart",
         cartAdd: "/cart/add",
-        cartChange: ,
-        cartUpdate: ,
+        cartChange: "/cart/change",
+        cartUpdate: "/cart/update",
         search: "/search",
         predictiveSearch: "/search/suggest",
         productRecommendations: "/recommendations/products"
@@ -2779,11 +2787,11 @@ img, video, iframe, svg, table { max-width: 100%; }
             <ul class="mega__list"><li><a href="collection.html">Accesorios</a></li></ul>
           </div><div>
           <p class="mega__col-title">Colecciones</p>
-          <ul class="mega__list"><li><a href="collection.html">Matcha</a></li><li><a href="page.html">El ritual</a></li><li><a href="blog.html">Recetas</a></li><li><a href="page-club-zenqa.html">Club Zenqa</a></li></ul>
+          <ul class="mega__list"><li><a href="collection.html">Todo el matcha</a></li><li><a href="collection.html">Kits y packs</a></li><li><a href="collection.html">Accesorios y cerámica</a></li><li><a href="collection.html">Merch Zenqa</a></li><li><a href="collection.html">Ideas regalo</a></li></ul>
         </div>
         <div>
           <p class="mega__col-title">Aprende</p>
-          <ul class="mega__list"><li><a href="collection.html">Matcha</a></li><li><a href="page.html">El ritual</a></li><li><a href="blog.html">Recetas</a></li><li><a href="page-club-zenqa.html">Club Zenqa</a></li></ul>
+          <ul class="mega__list"><li><a href="page-como-preparar-matcha.html">Cómo preparar matcha</a></li><li><a href="blog.html">Recetas</a></li><li><a href="page-encuentra-tu-matcha.html">Encuentra tu matcha</a></li><li><a href="page-sobre-nosotros.html">Nuestra historia</a></li><li><a href="page-envios-y-devoluciones.html">Envíos y devoluciones</a></li></ul>
         </div>
       </div>
     </div>
