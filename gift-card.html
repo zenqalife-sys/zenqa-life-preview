@@ -66,7 +66,7 @@ body {
   font-family: var(--font-body);
   font-size: var(--font-size-base);
   line-height: 1.6;
-  font-weight: 600;
+  font-weight: 500;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
@@ -100,12 +100,18 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3 {
 body.headings-uppercase h1, body.headings-uppercase h2, body.headings-uppercase h3,
 body.headings-uppercase h4, body.headings-uppercase h5, body.headings-uppercase h6,
 body.headings-uppercase .h1, body.headings-uppercase .h2, body.headings-uppercase .h3 { text-transform: uppercase; }
-/* Red de seguridad: si una palabra no cabe (pantallas muy estrechas, titular grande),
-   se parte con guion en lugar de sacar la página de ancho. No afecta cuando sí cabe. */
-h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5,
+/* Las palabras NUNCA se parten con guion: si un titular no cabe en pantallas muy
+   estrechas, se reduce el tamaño de letra (ver más abajo), no se rompe la palabra. */
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, p, li, a, span, button,
 .page-hero__title, .legal__title, .hero__title, .rte h1, .rte h2, .rte h3 {
-  overflow-wrap: break-word;
-  hyphens: auto;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+  -webkit-hyphens: none;
+}
+/* En pantallas estrechas los titulares se ajustan en lugar de partir palabras */
+@media (max-width: 560px) {
+  :root { --display-scale: 0.86; }
 }
 
 h1, .h1 { font-size: calc(var(--step-7) * var(--display-scale)); }
@@ -113,10 +119,10 @@ h2, .h2 { font-size: calc(var(--step-6) * var(--display-scale)); }
 h3, .h3 { font-size: calc(var(--step-5) * var(--display-scale)); }
 h4, .h4 { font-size: calc(var(--step-3) * var(--display-scale)); }
 h5, .h5 { font-size: var(--step-2); }
-p { font-weight: 700; text-wrap: pretty; }
-.lead, .rte p, .section p { font-weight: 700; }
-.text-muted, .rte small { font-weight: 600; opacity: 0.9; }
-.font-editorial { font-family: var(--font-body); font-weight: 700; font-style: normal; text-transform: none; letter-spacing: 0; }
+p { font-weight: 500; text-wrap: pretty; }
+.lead, .hero__text, .rte p { font-weight: 600; }
+.text-muted, .rte small { font-weight: 500; }
+.font-editorial { font-family: var(--font-body); font-weight: 600; font-style: normal; text-transform: none; letter-spacing: 0; }
 .kicker {
   font-family: var(--font-body);
   font-size: var(--step--1);
@@ -199,7 +205,7 @@ p { font-weight: 700; text-wrap: pretty; }
 }
 .flex { display: flex; }
 .flex-center { display: flex; align-items: center; justify-content: center; }
-.flex-between { display: flex; align-items: center; justify-content: space-between; gap: var(--space-sm); }
+.flex-between { display: flex; align-items: center; justify-content: space-between; gap: var(--space-sm); flex-wrap: wrap; }
 .flex-col { display: flex; flex-direction: column; }
 .stack > * + * { margin-top: var(--space-sm); }
 .stack-lg > * + * { margin-top: var(--space-lg); }
@@ -331,28 +337,18 @@ p { font-weight: 700; text-wrap: pretty; }
 /* ---------- 8. CABECERA / NAVEGACIÓN ---------- */
 .announcement {
   background: var(--color-forest); color: var(--color-matcha);
-  font-size: 1.05rem; font-weight: 800; letter-spacing: 0.02em;
+  font-size: 1.15rem; font-weight: 700; letter-spacing: 0;
   position: relative; z-index: calc(var(--z-header) + 2);
 }
 .announcement__inner {
   display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; gap: 6px var(--space-sm);
-  padding: 10px var(--gutter); text-align: center; min-height: 40px;
+  padding: 12px var(--gutter); text-align: center; min-height: 46px;
 }
-.announcement__inner > div:nth-child(2) { min-width: 0; text-wrap: balance; }
-.announcement a { text-decoration: underline; text-underline-offset: 3px; }
-.announcement__nav,
-.announcement__right { display: none; gap: var(--space-sm); font-size: var(--step--1); font-weight: 700; }
-.announcement__nav { justify-content: flex-start; }
-.announcement__right { justify-content: flex-end; align-items: center; }
-/* En pantallas anchas las tres zonas conviven sin solaparse (antes usaban position:absolute) */
-@media (min-width: 1180px) {
-  .announcement__inner { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); }
-  .announcement__nav, .announcement__right { display: flex; }
-}
-@media (min-width: 990px) and (max-width: 1179px) {
-  .announcement__inner { grid-template-columns: minmax(0, 1fr) auto; }
-  .announcement__right { display: flex; }
-}
+.announcement__inner > div:first-child { min-width: 0; text-wrap: balance; }
+.announcement a { text-decoration: underline; text-underline-offset: 3px; color: inherit; }
+/* La barra es solo el mensaje: grande y centrado. Los enlaces de dentro y el aviso del
+   Club se han retirado porque duplicaban la cabecera y el pie. */
+@media (max-width: 749px) { .announcement { font-size: 1rem; } }
 
 .site-header {
   position: relative; z-index: var(--z-header);
