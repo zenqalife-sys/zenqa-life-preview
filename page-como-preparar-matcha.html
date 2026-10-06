@@ -945,8 +945,15 @@ h1 em, h2 em, h3 em, h4 em, .h1 em, .h2 em, .h3 em, .h4 em, .rte h1 em, .rte h2 
 /* ---------- 20. CLUB / SUSCRIPCIÓN ---------- */
 .club-plans { display: grid; gap: var(--space-md); }
 @media (min-width: 750px) { .club-plans { grid-template-columns: repeat(3, 1fr); } }
-.club-plan { position: relative; display: grid; gap: var(--space-sm); align-content: start; padding: var(--space-lg); border-radius: var(--radius-lg); background: var(--color-surface); border: 1px solid var(--color-line); }
+.club-plan { position: relative; display: grid; gap: var(--space-sm); align-content: start; padding: var(--space-lg);
+  border-radius: var(--radius-lg); background: var(--color-surface); border: 1px solid var(--color-line);
+  /* La tarjeta se pinta sola: antes heredaba el texto claro de la sección verde y el título
+     («Cada 8 semanas», «Pack ritual») quedaba crema sobre crema, invisible. */
+  color: var(--color-forest); }
+.club-plan .text-muted { color: var(--color-muted); }
+.club-plan .badge--cream { color: var(--color-forest); }
 .club-plan--featured { background: var(--color-forest); color: var(--color-bg); border-color: var(--color-forest); box-shadow: var(--shadow-green); }
+.club-plan--featured h3, .club-plan--featured .club-plan__price strong { color: var(--color-bg); }
 .club-plan--featured .text-muted, .club-plan--featured li { color: rgba(247,245,236,0.82); }
 .club-plan__flag { position: absolute; top: -13px; left: var(--space-lg); }
 .club-plan__price { display: flex; align-items: baseline; gap: 8px; }
@@ -1336,16 +1343,37 @@ body.has-grain { position: relative; }
 }
 
 /* ---------- 29. UTILIDADES Y CORRECCIONES ---------- */
+/* El rosa de marca (#FF6EBC) sobre crema da 2,3:1 de contraste: ilegible para textos.
+   Para TEXTO rosa se usa una versión más profunda del mismo rosa (4,2:1 sobre crema);
+   sobre fondos oscuros y en fondos/badges se mantiene el rosa de marca. */
 /* Legibilidad sobre fondos oscuros: nada de gris apagado sobre verde bosque o tinta */
 .on-dark, .on-dark * { color: rgba(247, 245, 236, 0.92); }
 .on-dark .lead, .on-dark .text-muted, .on-dark p { color: rgba(247, 245, 236, 0.9); }
 .on-dark .kicker { color: var(--color-matcha); }
 .on-dark .btn { color: var(--color-ink); }
+/* Los botones de contorno claro van con texto claro aunque el fondo sea oscuro */
+.on-dark .btn--outline-light, .section--forest .btn--outline-light, .section--ink .btn--outline-light {
+  color: var(--color-bg); border-color: rgba(247, 245, 236, 0.6); }
+.on-dark .btn--outline-light:hover, .section--forest .btn--outline-light:hover { background: var(--color-bg); color: var(--color-forest); }
 .section--forest .text-muted, .section--ink .text-muted, .section--forest .lead, .section--ink .lead,
 .section--forest .kicker, .section--ink .kicker { color: rgba(247, 245, 236, 0.88); }
 .section--forest .text-muted, .section--ink .text-muted { color: rgba(247, 245, 236, 0.78); }
 .section--forest h1, .section--forest h2, .section--forest h3, .section--forest h4,
 .section--ink h1, .section--ink h2, .section--ink h3, .section--ink h4 { color: var(--color-bg); }
+
+/* Las tarjetas claras dentro de una sección oscura recuperan su propio color:
+   antes el texto crema de la sección se colaba en la tarjeta clara y el título
+   quedaba invisible (Club Zenqa: «Cada 8 semanas», «Pack ritual»). */
+.section--forest .club-plan, .section--ink .club-plan, .on-dark .club-plan,
+.section--forest .club-plan h3, .section--ink .club-plan h3,
+.section--forest .club-plan .club-plan__price strong, .section--ink .club-plan .club-plan__price strong,
+.section--forest .club-plan li, .section--ink .club-plan li, .on-dark .club-plan li { color: var(--color-forest); }
+.section--forest .club-plan .text-muted, .section--ink .club-plan .text-muted, .on-dark .club-plan .text-muted { color: var(--color-muted); }
+/* …y la tarjeta destacada (verde) mantiene su texto claro */
+.section--forest .club-plan--featured, .section--ink .club-plan--featured,
+.section--forest .club-plan--featured h3, .section--forest .club-plan--featured .club-plan__price strong,
+.section--forest .club-plan--featured li { color: var(--color-bg); }
+.section--forest .club-plan--featured .text-muted { color: rgba(247, 245, 236, 0.82); }
 
 /* El rosa se usa SIEMPRE igual en los elementos comunes:
    botones de acción en rosa con texto tinta · precios rebajados en rosa · números de sección en rosa */
@@ -1705,6 +1733,13 @@ img, video, iframe, svg, table { max-width: 100%; }
 .club-teaser { display: grid; gap: 8px; padding: var(--space-md); border: 1px dashed var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); }
 .club-teaser__title { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 0; font-weight: 800; }
 .club-teaser__note { margin: 0; padding-top: 6px; border-top: 1px dashed var(--color-border); color: var(--color-muted); }
+
+/* --- Texto rosa legible sobre fondos claros (al final para ganar en la cascada) --- */
+:root { --color-pink-text: #D62E8C; }
+.kicker--pink, .eyebrow-number, .price--sale, .legal__clause-num, .countdown small { color: var(--color-pink-text); }
+.section--forest .kicker--pink, .section--ink .kicker--pink, .on-dark .kicker--pink,
+.section--forest .eyebrow-number, .section--ink .eyebrow-number, .on-dark .eyebrow-number,
+.site-footer .kicker--pink, .site-footer .eyebrow-number { color: var(--color-pink); }
 </style>
     <script>/* ==========================================================================
    ZENQA LIFE — theme.js
