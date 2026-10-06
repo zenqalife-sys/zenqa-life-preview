@@ -2733,13 +2733,8 @@ img, video, iframe, svg, table { max-width: 100%; }
     });
   }
 
-  /* ------------------------------------------------------- volver arriba */
+  /* ------------------------------------------------------------ utilidades */
   function initMisc() {
-    const toTop = $('[data-to-top]');
-    if (toTop) {
-      on(window, 'scroll', () => toTop.classList.toggle('is-visible', window.scrollY > 700), { passive: true });
-      on(toTop, 'click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-    }
     // Año dinámico
     $$('[data-year]').forEach((el) => (el.textContent = new Date().getFullYear()));
     // Copiar enlace (compartir)
@@ -3311,11 +3306,7 @@ img, video, iframe, svg, table { max-width: 100%; }
       <p class="text-muted" style="font-size:var(--step--2)">Sin spam. Solo matcha y buenas vibras. Baja cuando quieras.</p>
     </div>
   </div>
-</div><a class="whatsapp-float" href="https://wa.me/34600000000?text=Hola+Zenqa+Life%2C+tengo+una+duda+sobre+el+matcha" target="_blank" rel="noopener" aria-label="WhatsApp">
-        <svg width="42" height="42" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.5 15.3L2 22l4.9-1.4A10 10 0 1 0 12 2Zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 1 1 12 20Zm4.5-5.9c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8.9c-.1.2-.3.2-.5.1a6.5 6.5 0 0 1-3.2-2.8c-.1-.2 0-.4.1-.5l.6-.7c.1-.2.1-.3 0-.5l-.7-1.6c-.2-.4-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.4-.3.3-.9 1-.9 2.2s.9 2.4 1 2.6a7.8 7.8 0 0 0 3.3 2.9c1.5.6 2 .6 2.7.5.5-.1 1.1-.5 1.3-1 .2-.5.2-.9.1-1 0-.1-.1-.2-.2-.3Z"/></svg>
-      </a><button class="to-top" type="button" aria-label="Volver arriba" data-to-top>
-        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
-      </button><div class="toast-stack" data-toast-stack aria-live="polite" aria-atomic="true"></div><div class="club-ribbon" hidden data-club-ribbon>
+</div><div class="toast-stack" data-toast-stack aria-live="polite" aria-atomic="true"></div><div class="club-ribbon" hidden data-club-ribbon>
         <span><svg width="42" height="42" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5 13.6 8 19 9.6 13.6 11.2 12 16.7 10.4 11.2 5 9.6 10.4 8Z"/><path d="M18.5 15.5 19.3 18l2.5.8-2.5.8-.8 2.4-.8-2.4-2.4-.8 2.4-.8Z"/></svg> Ahorra 15%</span>
       </div></body>
 </html>
